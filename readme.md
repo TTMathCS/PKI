@@ -4,12 +4,14 @@ There are so many PKI terms and resources you can search on web, but unfortunate
 no easy and simple answers.
 Below is the outline of what I summarize of PKI
 
-1. **What information** should be included in a certificate? X.509 defines what data can go into certificate, but at high
+1. **What information** should be included in a certificate? X.509 defines what data can go into certificate, but at
+   high
    level of metadata.
 2. **What abstract format** should x.509 use? It is like when save data, should I use json or yaml? ASN.1 defines the
    abstract layer of format of X.509 object
 3. **What binary format** should a certificate be saved? You can use text file, word document or Apple pages to save
-   documents, which will save the data with different binary format. For certificate, popular one are der, pem, pkcs#7 and pkcs#12.
+   documents, which will save the data with different binary format. For certificate, popular one are der, pem, pkcs#7
+   and pkcs#12.
 
 Above are summary of those terms and relations. If you are not bored enough you may continue the reading of below.
 
@@ -172,3 +174,45 @@ TLDR., https://comodosslstore.com/resources/a-ssl-certificate-file-extension-exp
 
 ---
 
+### Public-key cryptography
+
+https://en.wikipedia.org/wiki/Public-key_cryptography
+
+- RSA (Rivest–Shamir–Adleman)
+- EDSCA
+- DSA
+- Diffie-Hellman
+
+---
+
+### RSA (Prime Number + Modular arithmatic)
+
+Refs:
+
+- https://www.youtube.com/watch?v=qph77bTKJTM
+
+The security of RSA relies on the practical difficulty of factoring the product of two large prime numbers, the "
+factoring problem". Breaking RSA encryption is known as the RSA problem. Whether it is as difficult as the factoring
+problem is an open question. There are no published methods to defeat the system if a large enough key is used.
+
+#### Algo to find Prime Numbers as below, but no good methods to break them up
+
+- Mersenne primes
+- Fermat primes
+- Pocklington primality test
+- Baillie-BSW primality test
+- Miller-Rabin primality test
+- Sieve of Erastosthenes
+
+**Q1: Why not pre-calculate** all those prime numbers and save in a rainbow table for cracking?
+**A:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked and pass the primality tests, they are 2^1024 or 2^2048 big
+and it is impossible to find all the prime numbers or even save all those prime numbers in that range, so far
+
+#### How it works
+1. pick up 2 prime number p and q, n = p * q
+2. pick e, e is co-prime to (p-1)(q-1)
+3. m is the message to encrypt.  c = m^e (mod n)
+4. d*e = 1 (mod (p-1)(q-1))
+5. decrypt: d = c^d (mod n)
+
+![img](resources/RSA_Algorithm.png)
