@@ -1,6 +1,19 @@
-### My notes on PKI
+### PKI Introduction
 
-Note: some notes I took from the reference link below:
+There are so many PKI terms and resources you can search on web, but unfortunately so many confused me and there looks
+no easy and simple answers.
+Below is the outline of what I summarize of PKI
+
+1. **What information** should be included in a certificate? X.509 defines what data can go into certificate, but at high
+   level of metadata.
+2. **What abstract format** should x.509 use? It is like when save data, should I use json or yaml? ASN.1 defines the
+   abstract layer of format of X.509 object
+3. **What binary format** should a certificate be saved? You can use text file, word document or Apple pages to save
+   documents, which will save the data with different binary format. For certificate, popular one are der, pem, pkcs#7 and pkcs#12.
+
+Above are summary of those terms and relations. If you are not bored enough you may continue the reading of below.
+
+reference link:
 
 - [Everything you should know about certificates and PKI but are too afraid to ask](https://smallstep.com/blog/everything-pki/)
 - [Understanding X.509 digital certificate thumbprints](https://morgansimonsen.wordpress.com/2013/04/16/understanding-x-509-digital-certificate-thumbprints/)
@@ -123,6 +136,7 @@ libraries will do most of the heavy lifting.
 ---
 
 ### Certificate Binary Formats:
+
 - X.509 defines what data go into certificates
 - ASN.1 defines what abstract format it should have (like json or yaml)
 - SSL format decides how to convert the certificate into bits and bytes. (PEM, PKCS7, DER, and PKCS#12)
@@ -155,5 +169,6 @@ TLDR., https://comodosslstore.com/resources/a-ssl-certificate-file-extension-exp
 - Extended XML Encoding Rules (E-XER)
 - Packed Encoding Rules (PER, unaligned: UPER, canonical: CPER)
 - Generic String Encoding Rules (GSER)
+
 ---
 
