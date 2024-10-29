@@ -1,5 +1,6 @@
-
 <!-- TOC -->
+
+* [Table of Content](#table-of-content)
     * [PKI Introduction](#pki-introduction)
     * [The Goal of certificate and PKI: to bind name to public keys](#the-goal-of-certificate-and-pki-to-bind-name-to-public-keys)
     * [PKI related terms](#pki-related-terms)
@@ -11,12 +12,14 @@
     * [Certificate Binary Formats:](#certificate-binary-formats)
     * [Public-key cryptography](#public-key-cryptography)
     * [RSA (Prime Number + Modular arithmatic)](#rsa-prime-number--modular-arithmatic)
-      * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
-      * [How it works](#how-it-works)
+        * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
+        * [How it works](#how-it-works)
     * [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
     * [TrustStores and KeyStores](#truststores-and-keystores)
+
 <!-- TOC -->
 
+---
 
 ### PKI Introduction
 
@@ -268,7 +271,7 @@ TLDR, https://en.wikipedia.org/wiki/EdDSA#Ed25519
 
 ### TrustStores and KeyStores
 
-They are mostly used for JAVA. They can be JKS keystore type, or PCKS12 keystore type. 
+They are mostly used for JAVA. They can be JKS keystore type, or PCKS12 keystore type.
 
 - A KeyStore consists of a database containing a private key and an associated certificate, or an associated certificate
   chain. The certificate chain consists of the client certificate and one or more certification authority (CA)
