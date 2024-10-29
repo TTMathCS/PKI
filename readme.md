@@ -231,23 +231,15 @@ big so that it is impossible to find all the prime numbers, or even save all tho
 
 ### ECDSA (Elliptic Curve Digital Signature Algorithm)
 
-https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm
-
 ECDSA is a Digital Signature Algorithm (DSA) which uses keys derived from ECC(Elliptic Curve Cryptography). It is a
 particularly efficient equation based on PKC (Public Key Cryptography).
-
----
-
-### EdDSA (Edwards-curve Digital Signature Algorithm)
-
 EdDSA is a digital signature scheme using variant of Schnorr signature based on twisted Edwards Curves.
-It is designed to be faster than existing digital signature schemes without sacrificing security. 
+It is designed to be faster than existing digital signature schemes without sacrificing security.
 
-Ed25519 is the EdDSA signature scheme using SHA-512 and Curve25519 where:
+**Ed25519** is the EdDSA signature scheme using SHA-512 and Curve25519 where:
 
 $` q = 2^{255} - 19 `$
 
 Twisted Edwards Curve: $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
-
 
 TLDR, https://en.wikipedia.org/wiki/EdDSA#Ed25519
