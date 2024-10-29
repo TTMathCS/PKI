@@ -179,13 +179,18 @@ TLDR., https://comodosslstore.com/resources/a-ssl-certificate-file-extension-exp
 https://en.wikipedia.org/wiki/Public-key_cryptography
 
 - RSA (Rivest–Shamir–Adleman)
-- EDSCA
+- ECDSA
+- Ed25519
 - DSA
 - Diffie-Hellman
+- AES
+- SHA
 
 ---
 
 ### RSA (Prime Number + Modular arithmatic)
+
+RSA is used to generate private key and public key
 
 Refs:
 
@@ -217,6 +222,32 @@ problem is an open question. There are no published methods to defeat the system
 **Question 1: Is it possible to pre-calculate** all those prime numbers and save them in a rainbow table for fast
 lookup?
 
-**Answer:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked during key pair generation, if they pass the primality
+**Answer:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked during key pair generation, if they pass the
+primality
 tests, they will be picked, otherwise it keeps trying until a big prime number is found. They are 2^1024 or 2^2048
 big so that it is impossible to find all the prime numbers, or even save all those prime numbers (no such big storage).
+
+---
+
+### ECDSA (Elliptic Curve Digital Signature Algorithm)
+
+https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm
+
+ECDSA is a Digital Signature Algorithm (DSA) which uses keys derived from ECC(Elliptic Curve Cryptography). It is a
+particularly efficient equation based on PKC (Public Key Cryptography).
+
+---
+
+### EdDSA (Edwards-curve Digital Signature Algorithm)
+
+EdDSA is a digital signature scheme using variant of Schnorr signature based on twisted Edwards Curves.
+It is designed to be faster than existing digital signature schemes without sacrificing security. 
+
+Ed25519 is the EdDSA signature scheme using SHA-512 and Curve25519 where:
+
+$` q = 2^{255} - 19 `$
+
+Twisted Edwards Curve: $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
+
+
+TLDR, https://en.wikipedia.org/wiki/EdDSA#Ed25519
