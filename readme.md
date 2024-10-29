@@ -280,3 +280,107 @@ They are mostly used for JAVA. They can be JKS keystore type, or PCKS12 keystore
   certificates, that is, self-signed certificates.
 
 TLDR,: https://www.ibm.com/docs/ro/zos-connect/zosconnect/3.0?topic=connect-keystores-truststores
+
+
+--- 
+
+### Commands to create self-signed certificate chain
+
+```shell
+# make certs for root ca
+openssl genrsa -out root.key 2048
+openssl req -x509 -sha256 -nodes -extensions v3_ca -key root.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=root.example.com" -days 3650 -out root.crt
+
+# make certs for intermediate ca
+openssl genrsa -out intermediate.key 2048
+openssl req -new -sha256 -nodes -key intermediate.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=intermediate.example.com" -out intermediate.csr
+openssl x509 -req -extensions v3_ca -in intermediate.csr -CA root.crt -CAkey root.key -CAcreateserial -out intermediate.crt -days 500 -sha256
+
+# make certs for end user
+openssl genrsa -out enduser.key 2048
+openssl req -new -sha256 -nodes -key enduser.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=enduser.example.com" -out enduser.csr
+openssl x509 -req -in enduser.csr -CA intermediate.crt -CAkey intermediate.key -CAcreateserial -out enduser.crt -days 500 -sha256
+
+# verify 
+openssl verify -CAfile <(cat intermediate.crt root.crt) enduser.crt
+openssl verify -CAfile <(cat root.crt intermediate.crt) enduser.crt
+```
+
+---
+
+### Commands that import certificate into TrustStore (JKS format)
+
+```shell
+# import test.crt into existing java truststore. 
+#The "keytool -importcert" command had no trouble reading the certificate in both PEM and DER formats.
+keytool -importcert -file <openssl_crt.pem> -keystore <jks-file-name.jks> -storepass jkspass -alias <alias-name> -keypass <keypass>
+keytool -trustcacerts -keystore "/jdk/jre/lib/security/cacerts" -storepass changeit -importcert -alias testalias -file "/opt/ssl/test.crt"
+
+# create new truststore and import the certificate
+keytool -import -alias testalias -file test.crt -keypass keypass -keystore test.jks -storepass test@123
+
+```
+
+---
+
+### Commands that import x.509 certificate and private key into Java Keystore
+
+Believe or not, keytool does not provide such basic functionality like importing private key to keystore. You can try
+this workaround with merging PKSC12 file with a private key to a keystore
+
+```shell
+#Step one: Convert the x.509 cert and key to a pkcs12 file
+#Note: Make sure you put a password on the pkcs12 file - otherwise you'll get a null pointer exception when you try to import it. 
+openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12 -name [some-alias] -CAfile ca.crt -caname root
+
+#Step two: Convert the pkcs12 file to a Java keystore
+keytool -importkeystore \
+        -deststorepass [changeit] -destkeypass [changeit] -destkeystore server.keystore \
+        -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-password \
+        -alias [some-alias]
+```
+
+---
+
+### Commands to view a certificate file
+```shell
+# view the contents of a .pem certificate
+openssl x509 -in certificate.crt -text -noout
+openssl x509 -inform pem -noout -text -in 'cerfile.cer'
+openssl x509 -inform der -noout -text -in 'cerfile.cer'
+keytool -printcert -file certificate.pem
+
+# windows
+certutil -dump C:\path\certfile.cer
+
+#Using `openssl` to display all certificates of a PEM file
+while openssl x509 -noout -text; do :; done < cert-bundle.pem
+
+# view the contents of a der format certificate
+openssl x509 -inform der -in CERTIFICATE.der -text -noout
+
+
+# list items in truststore/keystore
+keytool -v -list -keystore /path/to/keystore
+keytool -list -keystore /path/to/keystore -alias foo
+
+```
+
+
+### Commands to view/export certificate of remote server
+```shell
+# view cert of a remote server
+echo | openssl s_client -showcerts -servername gnupg.org -connect gnupg.org:443 2>/dev/null | openssl x509 -inform pem -noout -text
+
+#shows the chain (as served) with nearly all details in a mostly rather ugly format
+keytool -printcert -sslserver $host[:$port]
+
+# export remote server certificate
+curl --insecure -vvI https://www.example.com 2>&1 | awk 'BEGIN { cert=0 } /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
+openssl s_client -showcerts -connect host.name.com:443 -servername host.name.com  </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > host.name.com.pem
+
+#you may also convert to a certificate for desktop
+openssl x509 -inform PEM -in host.name.com.pem -outform DER -out host.name.com.cer
+
+
+```
