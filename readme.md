@@ -202,17 +202,21 @@ problem is an open question. There are no published methods to defeat the system
 - Pocklington primality test
 - Baillie-BSW primality test
 - Miller-Rabin primality test
-- Sieve of Erastosthenes
-
-**Q1: Why not pre-calculate** all those prime numbers and save in a rainbow table for cracking?
-**A:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked and pass the primality tests, they are 2^1024 or 2^2048 big
-and it is impossible to find all the prime numbers or even save all those prime numbers in that range, so far
+- Sieve of Eratosthenes
 
 #### How it works
-1. pick up 2 prime number p and q, n = p * q
-2. pick e, e is co-prime to (p-1)(q-1)
-3. m is the message to encrypt.  c = m^e (mod n)
-4. d*e = 1 (mod (p-1)(q-1))
-5. decrypt: d = c^d (mod n)
+
+1. pick up 2 prime number p and q, $` n = p * q`$
+2. pick number e, e is co-prime to $` (p-1)(q-1) `$
+3. m is the message to encrypt. c = $`m^e (mod \ n) `$
+4. calculate d that $` d*e = 1 \ (mod \ (p-1)(q-1)) `$
+5. decrypt: $` d = c^d \ (mod \ n) `$
 
 ![img](resources/RSA_Algorithm.png)
+
+**Question 1: Is it possible to pre-calculate** all those prime numbers and save them in a rainbow table for fast
+lookup?
+
+**Answer:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked during key pair generation, if they pass the primality
+tests, they will be picked, otherwise it keeps trying until a big prime number is found. They are 2^1024 or 2^2048
+big so that it is impossible to find all the prime numbers, or even save all those prime numbers (no such big storage).
