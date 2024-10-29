@@ -1,3 +1,23 @@
+
+<!-- TOC -->
+    * [PKI Introduction](#pki-introduction)
+    * [The Goal of certificate and PKI: to bind name to public keys](#the-goal-of-certificate-and-pki-to-bind-name-to-public-keys)
+    * [PKI related terms](#pki-related-terms)
+    * [MACs and signatures authenticate stuff](#macs-and-signatures-authenticate-stuff)
+    * [What key pair can do?](#what-key-pair-can-do)
+    * [Certificate format](#certificate-format)
+    * [x.509 certificate structure (V3 defined in RFC5280)](#x509-certificate-structure-v3-defined-in-rfc5280)
+    * [What is ASN.1 (Abstract Syntax Notion one)?](#what-is-asn1-abstract-syntax-notion-one)
+    * [Certificate Binary Formats:](#certificate-binary-formats)
+    * [Public-key cryptography](#public-key-cryptography)
+    * [RSA (Prime Number + Modular arithmatic)](#rsa-prime-number--modular-arithmatic)
+      * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
+      * [How it works](#how-it-works)
+    * [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
+    * [TrustStores and KeyStores](#truststores-and-keystores)
+<!-- TOC -->
+
+
 ### PKI Introduction
 
 There are so many PKI terms and resources you can search on web, but unfortunately so many confused me and there looks
@@ -243,3 +263,17 @@ $` q = 2^{255} - 19 `$
 Twisted Edwards Curve: $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
 
 TLDR, https://en.wikipedia.org/wiki/EdDSA#Ed25519
+
+---
+
+### TrustStores and KeyStores
+
+They are mostly used for JAVA. They can be JKS keystore type, or PCKS12 keystore type. 
+
+- A KeyStore consists of a database containing a private key and an associated certificate, or an associated certificate
+  chain. The certificate chain consists of the client certificate and one or more certification authority (CA)
+  certificates.
+- A TrustStore contains only the certificates trusted by the client (a “trust” store). These certificates are CA root
+  certificates, that is, self-signed certificates.
+
+TLDR,: https://www.ibm.com/docs/ro/zos-connect/zosconnect/3.0?topic=connect-keystores-truststores
