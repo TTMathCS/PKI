@@ -1,5 +1,4 @@
 <!-- TOC -->
-
 * [Table of Content](#table-of-content)
     * [PKI Introduction](#pki-introduction)
     * [The Goal of certificate and PKI: to bind name to public keys](#the-goal-of-certificate-and-pki-to-bind-name-to-public-keys)
@@ -12,11 +11,15 @@
     * [Certificate Binary Formats:](#certificate-binary-formats)
     * [Public-key cryptography](#public-key-cryptography)
     * [RSA (Prime Number + Modular arithmatic)](#rsa-prime-number--modular-arithmatic)
-        * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
-        * [How it works](#how-it-works)
+      * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
+      * [How it works](#how-it-works)
     * [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
     * [TrustStores and KeyStores](#truststores-and-keystores)
-
+    * [Commands to create self-signed certificate chain](#commands-to-create-self-signed-certificate-chain)
+    * [Commands that import certificate into TrustStore (JKS format)](#commands-that-import-certificate-into-truststore-jks-format)
+    * [Commands that import x.509 certificate and private key into Java Keystore](#commands-that-import-x509-certificate-and-private-key-into-java-keystore)
+    * [Commands to view a certificate file](#commands-to-view-a-certificate-file)
+    * [Commands to view/export certificate of remote server](#commands-to-viewexport-certificate-of-remote-server)
 <!-- TOC -->
 
 ---
