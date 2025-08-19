@@ -40,7 +40,22 @@ Cyclically shift rows:
 
 #### 3. MixColumns
 Matrix multiplication in $GF(2^8)$:
-$$\begin{pmatrix} s'_{0,j} \\ s'_{1,j} \\ s'_{2,j} \\ s'_{3,j} \end{pmatrix} = \begin{pmatrix} 2 & 3 & 1 & 1 \\ 1 & 2 & 3 & 1 \\ 1 & 1 & 2 & 3 \\ 3 & 1 & 1 & 2 \end{pmatrix} \begin{pmatrix} s_{0,j} \\ s_{1,j} \\ s_{2,j} \\ s_{3,j} \end{pmatrix}$$
+$$\begin{pmatrix} 
+s'_{0,j} \\
+s'_{1,j} \\
+s'_{2,j} \\
+s'_{3,j}
+\end{pmatrix} = \begin{pmatrix}
+2 & 3 & 1 & 1 \\
+1 & 2 & 3 & 1 \\
+1 & 1 & 2 & 3 \\
+3 & 1 & 1 & 2
+\end{pmatrix} \begin{pmatrix}
+s_{0,j} \\
+s_{1,j} \\
+s_{2,j} \\
+s_{3,j}
+\end{pmatrix}$$
 
 #### 4. AddRoundKey
 XOR with round key:
