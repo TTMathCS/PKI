@@ -214,71 +214,24 @@ Understanding the relationship between certificate standards:
 
 **Reference:** [Public-key cryptography - Wikipedia](https://en.wikipedia.org/wiki/Public-key_cryptography)
 
-### Common Public-Key Algorithms:
-- **RSA** (Rivest–Shamir–Adleman)
-- **ECDSA** (Elliptic Curve Digital Signature Algorithm)
-- **Ed25519** (EdDSA variant)
-- **DSA** (Digital Signature Algorithm)
-- **Diffie-Hellman** (Key exchange)
+### PKI Algorithms:
+- **[RSA](RSA.md)** (Rivest–Shamir–Adleman)
+- **[ECDSA](ECDSA.md)** (Elliptic Curve Digital Signature Algorithm)
+- **[Ed25519](Ed25519.md)** (Edwards-curve Digital Signature Algorithm)
+- **[DSA](DSA.md)** (Digital Signature Algorithm)
+- **[Diffie-Hellman](Diffie-Hellman.md)** (Key exchange)
 
 ### Related Algorithms:
-- **AES** (Advanced Encryption Standard - symmetric)
-- **SHA** (Secure Hash Algorithm family)
+- **[AES](AES.md)** (Advanced Encryption Standard - symmetric)
+- **[SHA](SHA.md)** (Secure Hash Algorithm family)
 
----
-
-## RSA (Prime Numbers + Modular Arithmetic)
-
-RSA is used to generate private and public key pairs for encryption and digital signatures.
-
-**Reference:** [RSA Algorithm Explained - YouTube](https://www.youtube.com/watch?v=qph77bTKJTM)
-
-### Security Foundation
-The security of RSA relies on the practical difficulty of factoring the product of two large prime numbers, known as the "factoring problem". Breaking RSA encryption is known as the RSA problem. Whether it is as difficult as the factoring problem remains an open question. There are no published methods to defeat the system when sufficiently large keys are used.
-
-### Algorithms to Find Prime Numbers
-These algorithms can find prime numbers, but no efficient methods exist to factor them back into their components:
-
-- **Mersenne primes**
-- **Fermat primes** 
-- **Pocklington primality test**
-- **Baillie-PSW primality test**
-- **Miller-Rabin primality test**
-- **Sieve of Eratosthenes**
-
-### How RSA Works
-
-1. **Choose two prime numbers** p and q, then calculate $` n = p \times q`$
-2. **Pick a number e** where e is co-prime to $` (p-1)(q-1) `$ (the totient function φ(n))
-3. **Encrypt message m:** $` c = m^e \pmod{n} `$
-4. **Calculate private key d** such that $` d \times e \equiv 1 \pmod{(p-1)(q-1)} `$
-5. **Decrypt ciphertext c:** $` m = c^d \pmod{n} `$
-
-![RSA Algorithm Visualization](resources/RSA_Algorithm.png)
-
-### Common Questions About RSA
-
-**Q: Is it possible to pre-calculate all prime numbers and save them in a rainbow table for fast lookup?**
-
-**A:** No, this is not feasible. Prime numbers are randomly selected during key pair generation - if they pass primality tests, they are used; otherwise, the system continues searching until suitable large primes are found. Modern RSA uses primes that are 2^1024 or 2^2048 bits in size, making it computationally impossible to find and store all such prime numbers (there isn't enough storage capacity in existence to hold them all).
-
----
-
-## ECDSA (Elliptic Curve Digital Signature Algorithm)
-
-ECDSA is a Digital Signature Algorithm (DSA) that uses keys derived from ECC (Elliptic Curve Cryptography). It is a particularly efficient algorithm based on Public Key Cryptography (PKC).
-
-### EdDSA (Edwards-curve Digital Signature Algorithm)
-EdDSA is a digital signature scheme using a variant of Schnorr signatures based on twisted Edwards curves. It is designed to be faster than existing digital signature schemes without sacrificing security.
-
-### Ed25519
-**Ed25519** is the EdDSA signature scheme using SHA-512 and Curve25519, defined by:
-
-**Prime:** $` q = 2^{255} - 19 `$
-
-**Twisted Edwards Curve:** $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
-
-**Reference:** [EdDSA - Ed25519 - Wikipedia](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
+### Prime Number Algorithms:
+- **[Mersenne Primes](Mersenne-Primes.md)** - Primes of the form 2^p - 1
+- **[Fermat Primes](Fermat-Primes.md)** - Primes of the form 2^(2^n) + 1
+- **[Miller-Rabin Primality Test](Miller-Rabin-Primality-Test.md)** - Probabilistic primality testing
+- **[Baillie-PSW Primality Test](Baillie-PSW-Primality-Test.md)** - Strong probabilistic primality test
+- **[Pocklington Primality Test](Pocklington-Primality-Test.md)** - Deterministic test for special forms
+- **[Sieve of Eratosthenes](Sieve-of-Eratosthenes.md)** - Ancient algorithm for finding primes
 
 ---
 
