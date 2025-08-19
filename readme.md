@@ -1,60 +1,54 @@
-<!-- TOC -->
-* [Table of Content](#table-of-content)
-    * [PKI Introduction](#pki-introduction)
-    * [The Goal of certificate and PKI: to bind name to public keys](#the-goal-of-certificate-and-pki-to-bind-name-to-public-keys)
-    * [PKI related terms](#pki-related-terms)
-    * [MACs and signatures authenticate stuff](#macs-and-signatures-authenticate-stuff)
-    * [What key pair can do?](#what-key-pair-can-do)
-    * [Certificate format](#certificate-format)
-    * [x.509 certificate structure (V3 defined in RFC5280)](#x509-certificate-structure-v3-defined-in-rfc5280)
-    * [What is ASN.1 (Abstract Syntax Notion one)?](#what-is-asn1-abstract-syntax-notion-one)
-    * [Certificate Binary Formats:](#certificate-binary-formats)
-    * [Public-key cryptography](#public-key-cryptography)
-    * [RSA (Prime Number + Modular arithmatic)](#rsa-prime-number--modular-arithmatic)
-      * [Algo to find Prime Numbers as below, but no good methods to break them up](#algo-to-find-prime-numbers-as-below-but-no-good-methods-to-break-them-up)
-      * [How it works](#how-it-works)
-    * [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
-    * [TrustStores and KeyStores](#truststores-and-keystores)
-    * [Commands to create self-signed certificate chain](#commands-to-create-self-signed-certificate-chain)
-    * [Commands that import certificate into TrustStore (JKS format)](#commands-that-import-certificate-into-truststore-jks-format)
-    * [Commands that import x.509 certificate and private key into Java Keystore](#commands-that-import-x509-certificate-and-private-key-into-java-keystore)
-    * [Commands to view a certificate file](#commands-to-view-a-certificate-file)
-    * [Commands to view/export certificate of remote server](#commands-to-viewexport-certificate-of-remote-server)
-<!-- TOC -->
+# PKI (Public Key Infrastructure) Guide
+
+## Table of Contents
+
+* [PKI Introduction](#pki-introduction)
+* [The Goal of Certificates and PKI: Bind Names to Public Keys](#the-goal-of-certificates-and-pki-bind-names-to-public-keys)
+* [PKI Related Terms](#pki-related-terms)
+* [MACs and Signatures Authenticate Data](#macs-and-signatures-authenticate-data)
+* [What Can Key Pairs Do?](#what-can-key-pairs-do)
+* [Certificate Formats](#certificate-formats)
+* [X.509 Certificate Structure (V3 defined in RFC5280)](#x509-certificate-structure-v3-defined-in-rfc5280)
+* [What is ASN.1 (Abstract Syntax Notation One)?](#what-is-asn1-abstract-syntax-notation-one)
+* [Certificate Binary Formats](#certificate-binary-formats)
+* [Public-Key Cryptography](#public-key-cryptography)
+* [RSA (Prime Numbers + Modular Arithmetic)](#rsa-prime-numbers--modular-arithmetic)
+  * [Algorithms to Find Prime Numbers](#algorithms-to-find-prime-numbers)
+  * [How RSA Works](#how-rsa-works)
+* [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
+* [TrustStores and KeyStores](#truststores-and-keystores)
+* [Commands to Create Self-Signed Certificate Chain](#commands-to-create-self-signed-certificate-chain)
+* [Commands to Import Certificate into TrustStore (JKS format)](#commands-to-import-certificate-into-truststore-jks-format)
+* [Commands to Import X.509 Certificate and Private Key into Java Keystore](#commands-to-import-x509-certificate-and-private-key-into-java-keystore)
+* [Commands to View a Certificate File](#commands-to-view-a-certificate-file)
+* [Commands to View/Export Certificate of Remote Server](#commands-to-viewexport-certificate-of-remote-server)
 
 ---
 
-### PKI Introduction
+## PKI Introduction
 
-There are so many PKI terms and resources you can search on web, but unfortunately so many confused me and there looks
-no easy and simple answers.
-Below is the outline of what I summarize of PKI
+There are many PKI terms and resources available on the web, but unfortunately, many of them can be confusing and there don't seem to be easy, simple answers. Below is an outline of what I've learned about PKI:
 
-1. **What information** should be included in a certificate? X.509 defines what data can go into certificate, but at
-   high
-   level of metadata.
-2. **What abstract format** should x.509 use? It is like when save data, should I use json or yaml? ASN.1 defines the
-   abstract layer of format of X.509 object
-3. **What binary format** should a certificate be saved? You can use text file, word document or Apple pages to save
-   documents, which will save the data with different binary format. For certificate, popular one are der, pem, pkcs#7
-   and pkcs#12.
+1. **What information** should be included in a certificate? X.509 defines what data can go into a certificate, but at a high level of metadata.
+2. **What abstract format** should X.509 use? It's like when saving data - should I use JSON or YAML? ASN.1 defines the abstract layer format of X.509 objects.
+3. **What binary format** should a certificate be saved in? You can use text files, Word documents, or Apple Pages to save documents, each saving the data with different binary formats. For certificates, popular formats are DER, PEM, PKCS#7, and PKCS#12.
 
-Above are summary of those terms and relations. If you are not bored enough you may continue the reading of below.
+The above is a summary of these terms and their relationships. If you're interested in learning more, please continue reading below.
 
-reference link:
+**Reference Links:**
 
 - [Everything you should know about certificates and PKI but are too afraid to ask](https://smallstep.com/blog/everything-pki/)
 - [Understanding X.509 digital certificate thumbprints](https://morgansimonsen.wordpress.com/2013/04/16/understanding-x-509-digital-certificate-thumbprints/)
 
 ---
 
-### The Goal of certificate and PKI: to bind name to public keys
+## The Goal of Certificates and PKI: Bind Names to Public Keys
 
 The rest is just implementation details.
 
 ---
 
-### PKI related terms
+## PKI Related Terms
 
 - entity
 - identity
@@ -70,126 +64,142 @@ The rest is just implementation details.
 
 ---
 
-### MACs and signatures authenticate stuff
+## MACs and Signatures Authenticate Data
 
-MAC = Message Authentication Code
+**MAC** = Message Authentication Code
 
----
-
-### What key pair can do?
-
-- Encrypt data with a public key, which can only be decrypted by private key
-- Sign some data with private key, which can be verified by public key
+MACs and digital signatures are both used to authenticate data, but they work differently:
+- MACs use symmetric keys (same key for creation and verification)
+- Digital signatures use asymmetric keys (private key for signing, public key for verification)
 
 ---
 
-### Certificate format
+## What Can Key Pairs Do?
 
-- X.509 v3 (PKIX described in RFC 5280), used for HTTPS over TLS if certificate is used without additional qualification
-- SSH
-- PGP
+- **Encrypt data** with a public key, which can only be decrypted by the corresponding private key
+- **Sign data** with a private key, which can be verified by the corresponding public key
 
 ---
 
-### x.509 certificate structure (V3 defined in RFC5280)
+## Certificate Formats
 
-X.509 is a standard of certificate. it defines which data should go into certificate, and are just objects with the name
-of the servers, the name of who signed the certificates, the signature and so on as below.
+- **X.509 v3** (PKIX described in RFC 5280) - used for HTTPS over TLS when certificates are used without additional qualification
+- **SSH** - used for SSH key authentication
+- **PGP** - used for email encryption and signing
 
-- version number
-- serial number
-- Signature Algorithm ID
-- Issuer Name
-- Validity period
-    - Not Before
-    - Not After
-- Subject name
-- Subject Public Key Info
-    - Public Key Algorithm
-    - Subject Public Key
-- Issuer Unique Identifier (Optional)
-- Subject Unique Identifier (Optional)
-- Extension (Optional)
-    - ...
-- Certificate Signature Algorithm
-- Certificate Signature
+---
 
-Command to check a website certificate
+## X.509 Certificate Structure (V3 defined in RFC5280)
+
+X.509 is a certificate standard that defines which data should go into certificates. Certificates are essentially objects containing the name of servers, the name of who signed the certificates, the signature, and other information as listed below:
+
+**Required Fields:**
+- **Version number** - X.509 version (typically v3)
+- **Serial number** - Unique identifier for the certificate
+- **Signature Algorithm ID** - Algorithm used to sign the certificate
+- **Issuer Name** - Distinguished name of the certificate authority
+- **Validity period**
+  - **Not Before** - Certificate valid start date
+  - **Not After** - Certificate expiration date
+- **Subject name** - Distinguished name of the certificate holder
+- **Subject Public Key Info**
+  - **Public Key Algorithm** - Algorithm used for the public key
+  - **Subject Public Key** - The actual public key
+
+**Optional Fields:**
+- **Issuer Unique Identifier** - Optional unique ID for the issuer
+- **Subject Unique Identifier** - Optional unique ID for the subject
+- **Extensions** - Additional certificate attributes (v3 feature)
+- **Certificate Signature Algorithm** - Algorithm used for certificate signature
+- **Certificate Signature** - Digital signature of the certificate
+
+**Commands to Check Website Certificates:**
 
 ```shell
-# with SNI
+# With SNI (Server Name Indication)
 openssl s_client -showcerts -servername www.google.ca -connect www.google.ca:443 </dev/null \
 | openssl x509 -inform pem -text
 
-# without SNI
+# Without SNI
 openssl s_client -showcerts -connect www.google.ca:443 </dev/null \
 | openssl x509 -inform pem -text
 
-# check all cert in pem file
+# Check all certificates in a PEM file
 while openssl x509 -noout -text; do :; done < _.google.com.pem
 ```
 
 ---
 
-### What is ASN.1 (Abstract Syntax Notion one)?
+## What is ASN.1 (Abstract Syntax Notation One)?
 
-How should we write our certificate in a computer format? There are a billion ways formatting a document and if we don't
-agree on one, then we will never be able to ask a computer to parse a x509 certificate. ASN.1 tells you exactly how you
-should write your object/certificate, like a format of json or yaml, but which don't defines how they were saved as
-bits/bytes (those are defined by SSL formats, like der, pem, pkcs# and etc.)
+How should we write our certificates in a computer format? There are countless ways to format a document, and if we don't agree on one standard, then we will never be able to ask a computer to parse an X.509 certificate. ASN.1 tells you exactly how you should structure your object/certificate, similar to formats like JSON or YAML, but it doesn't define how they are saved as bits/bytes (those are defined by encoding formats like DER, PEM, PKCS#, etc.).
 
-ASN.1 is the metadata definition on what data needs to be included, mandatory or optional, but it doesn't define the
-actual storage format saved.
-[TLDR.,](https://morgansimonsen.wordpress.com/2013/04/16/understanding-x-509-digital-certificate-thumbprints/)
+ASN.1 is the metadata definition that specifies what data needs to be included (mandatory or optional), but it doesn't define the actual storage format used for saving.
 
-X.509 builds on ASN.1, another ITU-T standard (defined by X.208 and X.680). ASN stands for
-Abstract Syntax Notation (1 stands for One). ASN.1 is a notation for defining data types.
-You can think of it like JSON for X.509 but it's actually more like protobuf or thrift or SQL
-DDL. RFC 5280 uses ASN.1 to define an X.509 certificate as an object that contains various
-bits of information: a name, key, signature, etc.
+**Key Points about ASN.1:**
 
-ASN.1 is abstract in the sense that the standard doesn't say anything about how stuﬀ
-should be represented as bits and bytes. For that there are various encoding rules that
-specify concrete representations for ASN.1 data values. It's an additional abstraction layer
-that's supposed to be useful, but is mostly just annoying. It's sort of like the diﬀerence
-between unicode and utf8 (eek).
+- **ASN** stands for **Abstract Syntax Notation** (the "1" stands for "One")
+- ASN.1 is a notation for defining data types
+- You can think of it like JSON for X.509, but it's actually more like Protocol Buffers, Thrift, or SQL DDL
+- RFC 5280 uses ASN.1 to define an X.509 certificate as an object containing various information: names, keys, signatures, etc.
 
-There are a bunch of encoding rules for ASN.1, but there's only one that's commonly used
-for X.509 certificates and other crypto stuﬀ: distinguished encoding rules or DER (though
-the non-canonical basic encoding rules (BER) are also occasionally used). DER is a pretty
-simple type-length-value encoding, but you really don't need to worry about it since
-libraries will do most of the heavy lifting.
+**Abstract Nature:**
+ASN.1 is abstract in the sense that the standard doesn't specify how data should be represented as bits and bytes. For that, there are various encoding rules that specify concrete representations for ASN.1 data values. It's an additional abstraction layer that's supposed to be useful but can be complex.
+
+**Encoding Rules:**
+There are many encoding rules for ASN.1, but there's only one commonly used for X.509 certificates and other cryptographic data:
+- **DER** (Distinguished Encoding Rules) - the most common
+- **BER** (Basic Encoding Rules) - occasionally used but non-canonical
+
+DER is a simple type-length-value encoding, but you don't need to worry about the details since libraries handle most of the complexity.
+
+**Reference:** [Understanding X.509 digital certificate thumbprints](https://morgansimonsen.wordpress.com/2013/04/16/understanding-x-509-digital-certificate-thumbprints/)
 
 
 ---
 
-### Certificate Binary Formats:
+## Certificate Binary Formats
 
-- X.509 defines what data go into certificates
-- ASN.1 defines what abstract format it should have (like json or yaml)
-- SSL format decides how to convert the certificate into bits and bytes. (PEM, PKCS7, DER, and PKCS#12)
+Understanding the relationship between certificate standards:
+- **X.509** defines what data goes into certificates
+- **ASN.1** defines the abstract format it should have (like JSON or YAML)
+- **Encoding formats** decide how to convert the certificate into bits and bytes (PEM, PKCS#7, DER, and PKCS#12)
 
-TLDR., https://comodosslstore.com/resources/a-ssl-certificate-file-extension-explanation-pem-pkcs7-der-and-pkcs12/
+### Common Certificate File Formats
 
-- **DER** (Distributed Encoding Rule): a binary form, can include certificates and private keys of all types. They
-  mostly use .cer or .der extensions. The DER certificate format is mostly
-- **PEM** (Private Enhanced Mail): contains Base64 encoded data of der. Extensions can be .pem, .crt, .cer, or .key
-  formats.
-  A PEM certificate file may consists of the server certificate and intermediate certificate in a separate .crt or .cer
-  file and the private key is in a .key file.
-    - certificate: It starts with "-----BEGIN CERTIFICATE-----" and ends with "-----END CERTIFICATE-----"
-    - private key: start with "-----BEGIN PRIVATE KEY-----" and ends with "-----END PRIVATE KEY-----"
-    - CSR: starts with "-----BEGIN CERTIFICATE REQUEST-----" and ends with "-----END CERTIFICATE REQUEST-----"
-- **P7B/PKCS#7**: encoded in Base64 ASCII encoding and usually have .p7b or .p7c file extensions. The thing that
-  separates
-  PKCS#7 formatted certificates is that only certificates can be stored in this format, not private keys. In other
-  words, a P7B file will only consist of certificates and chain certificates. The certificates having P7B/PKCS#7 format
-  are contained between the “—–BEGIN PKCS7—–” and “—–END PKCS7—–” statements. Microsoft Windows and Java Tomcat are the
-  most common platforms using this format for SSL certificates.
-- **PFX/P12/PKCS#12**:  all of which refer to a personal information exchange format — is the binary format that stores
-  the server certificate, the intermediate certificate and the private key in a single password-protected pfx or .p12
-  file. These files are typically used on Windows platforms i to allow you to import and export certificates and private
-  keys.
+**Reference:** [SSL Certificate File Extension Explanation](https://comodosslstore.com/resources/a-ssl-certificate-file-extension-explanation-pem-pkcs7-der-and-pkcs12/)
+
+#### DER (Distinguished Encoding Rules)
+- **Type:** Binary format
+- **Content:** Can include certificates and private keys of all types
+- **Extensions:** `.cer`, `.der`
+- **Usage:** Primarily used for single certificates
+
+#### PEM (Privacy Enhanced Mail)
+- **Type:** Base64 encoded DER data
+- **Extensions:** `.pem`, `.crt`, `.cer`, `.key`
+- **Content:** A PEM file may contain server certificates, intermediate certificates (in `.crt` or `.cer` files), and private keys (in `.key` files)
+- **Format markers:**
+  - **Certificate:** `-----BEGIN CERTIFICATE-----` ... `-----END CERTIFICATE-----`
+  - **Private key:** `-----BEGIN PRIVATE KEY-----` ... `-----END PRIVATE KEY-----`
+  - **CSR:** `-----BEGIN CERTIFICATE REQUEST-----` ... `-----END CERTIFICATE REQUEST-----`
+
+#### P7B/PKCS#7
+- **Type:** Base64 ASCII encoded
+- **Extensions:** `.p7b`, `.p7c`
+- **Content:** Only certificates (no private keys)
+- **Usage:** Contains certificates and certificate chains only
+- **Format markers:** `-----BEGIN PKCS7-----` ... `-----END PKCS7-----`
+- **Platforms:** Commonly used by Microsoft Windows and Java Tomcat
+
+#### PFX/P12/PKCS#12
+- **Type:** Binary format (password-protected)
+- **Extensions:** `.pfx`, `.p12`
+- **Content:** Server certificate, intermediate certificate, and private key in a single file
+- **Usage:** Personal Information Exchange format
+- **Platforms:** Typically used on Windows platforms for importing/exporting certificates and private keys
+
+### Other ASN.1 Encoding Rules
 - Basic Encoding Rules (BER)
 - Canonical Encoding Rules (CER)
 - XML Encoding Rules (XER)
@@ -200,190 +210,206 @@ TLDR., https://comodosslstore.com/resources/a-ssl-certificate-file-extension-exp
 
 ---
 
-### Public-key cryptography
+## Public-Key Cryptography
 
-https://en.wikipedia.org/wiki/Public-key_cryptography
+**Reference:** [Public-key cryptography - Wikipedia](https://en.wikipedia.org/wiki/Public-key_cryptography)
 
-- RSA (Rivest–Shamir–Adleman)
-- ECDSA
-- Ed25519
-- DSA
-- Diffie-Hellman
-- AES
-- SHA
+### Common Public-Key Algorithms:
+- **RSA** (Rivest–Shamir–Adleman)
+- **ECDSA** (Elliptic Curve Digital Signature Algorithm)
+- **Ed25519** (EdDSA variant)
+- **DSA** (Digital Signature Algorithm)
+- **Diffie-Hellman** (Key exchange)
 
----
-
-### RSA (Prime Number + Modular arithmatic)
-
-RSA is used to generate private key and public key
-
-Refs:
-
-- https://www.youtube.com/watch?v=qph77bTKJTM
-
-The security of RSA relies on the practical difficulty of factoring the product of two large prime numbers, the "
-factoring problem". Breaking RSA encryption is known as the RSA problem. Whether it is as difficult as the factoring
-problem is an open question. There are no published methods to defeat the system if a large enough key is used.
-
-#### Algo to find Prime Numbers as below, but no good methods to break them up
-
-- Mersenne primes
-- Fermat primes
-- Pocklington primality test
-- Baillie-BSW primality test
-- Miller-Rabin primality test
-- Sieve of Eratosthenes
-
-#### How it works
-
-1. pick up 2 prime number p and q, $` n = p * q`$
-2. pick number e, e is co-prime to $` (p-1)(q-1) `$
-3. m is the message to encrypt. c = $`m^e (mod \ n) `$
-4. calculate d that $` d*e = 1 \ (mod \ (p-1)(q-1)) `$
-5. decrypt: $` d = c^d \ (mod \ n) `$
-
-![img](resources/RSA_Algorithm.png)
-
-**Question 1: Is it possible to pre-calculate** all those prime numbers and save them in a rainbow table for fast
-lookup?
-
-**Answer:** The Prime Numbers (Semi-PrimeNumbers) are randomly picked during key pair generation, if they pass the
-primality
-tests, they will be picked, otherwise it keeps trying until a big prime number is found. They are 2^1024 or 2^2048
-big so that it is impossible to find all the prime numbers, or even save all those prime numbers (no such big storage).
+### Related Algorithms:
+- **AES** (Advanced Encryption Standard - symmetric)
+- **SHA** (Secure Hash Algorithm family)
 
 ---
 
-### ECDSA (Elliptic Curve Digital Signature Algorithm)
+## RSA (Prime Numbers + Modular Arithmetic)
 
-ECDSA is a Digital Signature Algorithm (DSA) which uses keys derived from ECC(Elliptic Curve Cryptography). It is a
-particularly efficient equation based on PKC (Public Key Cryptography).
-EdDSA is a digital signature scheme using variant of Schnorr signature based on twisted Edwards Curves.
-It is designed to be faster than existing digital signature schemes without sacrificing security.
+RSA is used to generate private and public key pairs for encryption and digital signatures.
 
-**Ed25519** is the EdDSA signature scheme using SHA-512 and Curve25519 where:
+**Reference:** [RSA Algorithm Explained - YouTube](https://www.youtube.com/watch?v=qph77bTKJTM)
 
-$` q = 2^{255} - 19 `$
+### Security Foundation
+The security of RSA relies on the practical difficulty of factoring the product of two large prime numbers, known as the "factoring problem". Breaking RSA encryption is known as the RSA problem. Whether it is as difficult as the factoring problem remains an open question. There are no published methods to defeat the system when sufficiently large keys are used.
 
-Twisted Edwards Curve: $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
+### Algorithms to Find Prime Numbers
+These algorithms can find prime numbers, but no efficient methods exist to factor them back into their components:
 
-TLDR, https://en.wikipedia.org/wiki/EdDSA#Ed25519
+- **Mersenne primes**
+- **Fermat primes** 
+- **Pocklington primality test**
+- **Baillie-PSW primality test**
+- **Miller-Rabin primality test**
+- **Sieve of Eratosthenes**
+
+### How RSA Works
+
+1. **Choose two prime numbers** p and q, then calculate $` n = p \times q`$
+2. **Pick a number e** where e is co-prime to $` (p-1)(q-1) `$ (the totient function φ(n))
+3. **Encrypt message m:** $` c = m^e \pmod{n} `$
+4. **Calculate private key d** such that $` d \times e \equiv 1 \pmod{(p-1)(q-1)} `$
+5. **Decrypt ciphertext c:** $` m = c^d \pmod{n} `$
+
+![RSA Algorithm Visualization](resources/RSA_Algorithm.png)
+
+### Common Questions About RSA
+
+**Q: Is it possible to pre-calculate all prime numbers and save them in a rainbow table for fast lookup?**
+
+**A:** No, this is not feasible. Prime numbers are randomly selected during key pair generation - if they pass primality tests, they are used; otherwise, the system continues searching until suitable large primes are found. Modern RSA uses primes that are 2^1024 or 2^2048 bits in size, making it computationally impossible to find and store all such prime numbers (there isn't enough storage capacity in existence to hold them all).
 
 ---
 
-### TrustStores and KeyStores
+## ECDSA (Elliptic Curve Digital Signature Algorithm)
 
-They are mostly used for JAVA. They can be JKS keystore type, or PCKS12 keystore type.
+ECDSA is a Digital Signature Algorithm (DSA) that uses keys derived from ECC (Elliptic Curve Cryptography). It is a particularly efficient algorithm based on Public Key Cryptography (PKC).
 
-- A KeyStore consists of a database containing a private key and an associated certificate, or an associated certificate
-  chain. The certificate chain consists of the client certificate and one or more certification authority (CA)
-  certificates.
-- A TrustStore contains only the certificates trusted by the client (a “trust” store). These certificates are CA root
-  certificates, that is, self-signed certificates.
+### EdDSA (Edwards-curve Digital Signature Algorithm)
+EdDSA is a digital signature scheme using a variant of Schnorr signatures based on twisted Edwards curves. It is designed to be faster than existing digital signature schemes without sacrificing security.
 
-TLDR,: https://www.ibm.com/docs/ro/zos-connect/zosconnect/3.0?topic=connect-keystores-truststores
+### Ed25519
+**Ed25519** is the EdDSA signature scheme using SHA-512 and Curve25519, defined by:
 
+**Prime:** $` q = 2^{255} - 19 `$
 
---- 
+**Twisted Edwards Curve:** $` -x^2 + y^2 = 1 - \frac{121665}{121666}x^2y^2`$
 
-### Commands to create self-signed certificate chain
+**Reference:** [EdDSA - Ed25519 - Wikipedia](https://en.wikipedia.org/wiki/EdDSA#Ed25519)
+
+---
+
+## TrustStores and KeyStores
+
+TrustStores and KeyStores are primarily used in Java applications. They can be JKS (Java KeyStore) or PKCS#12 keystore types.
+
+### KeyStore
+A KeyStore consists of a database containing:
+- A private key and its associated certificate, OR
+- An associated certificate chain
+- The certificate chain includes the client certificate and one or more Certification Authority (CA) certificates
+
+### TrustStore  
+A TrustStore contains only certificates trusted by the client (hence "trust" store):
+- These are typically CA root certificates
+- Usually self-signed certificates
+- Used to verify the authenticity of certificates presented by other parties
+
+**Reference:** [KeyStores and TrustStores - IBM Documentation](https://www.ibm.com/docs/ro/zos-connect/zosconnect/3.0?topic=connect-keystores-truststores)
+
+---
+
+## Commands to Create Self-Signed Certificate Chain
 
 ```shell
-# make certs for root ca
+# Create certificates for root CA
 openssl genrsa -out root.key 2048
-openssl req -x509 -sha256 -nodes -extensions v3_ca -key root.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=root.example.com" -days 3650 -out root.crt
+openssl req -x509 -sha256 -nodes -extensions v3_ca -key root.key \
+  -subj "/C=CA/ST=ON/O=HelloWorld/CN=root.example.com" -days 3650 -out root.crt
 
-# make certs for intermediate ca
+# Create certificates for intermediate CA
 openssl genrsa -out intermediate.key 2048
-openssl req -new -sha256 -nodes -key intermediate.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=intermediate.example.com" -out intermediate.csr
-openssl x509 -req -extensions v3_ca -in intermediate.csr -CA root.crt -CAkey root.key -CAcreateserial -out intermediate.crt -days 500 -sha256
+openssl req -new -sha256 -nodes -key intermediate.key \
+  -subj "/C=CA/ST=ON/O=HelloWorld/CN=intermediate.example.com" -out intermediate.csr
+openssl x509 -req -extensions v3_ca -in intermediate.csr -CA root.crt -CAkey root.key \
+  -CAcreateserial -out intermediate.crt -days 500 -sha256
 
-# make certs for end user
+# Create certificates for end user
 openssl genrsa -out enduser.key 2048
-openssl req -new -sha256 -nodes -key enduser.key -subj "/C=CA/ST=ON/O=HelloWorld/CN=enduser.example.com" -out enduser.csr
-openssl x509 -req -in enduser.csr -CA intermediate.crt -CAkey intermediate.key -CAcreateserial -out enduser.crt -days 500 -sha256
+openssl req -new -sha256 -nodes -key enduser.key \
+  -subj "/C=CA/ST=ON/O=HelloWorld/CN=enduser.example.com" -out enduser.csr
+openssl x509 -req -in enduser.csr -CA intermediate.crt -CAkey intermediate.key \
+  -CAcreateserial -out enduser.crt -days 500 -sha256
 
-# verify 
+# Verify certificate chain
 openssl verify -CAfile <(cat intermediate.crt root.crt) enduser.crt
 openssl verify -CAfile <(cat root.crt intermediate.crt) enduser.crt
 ```
 
 ---
 
-### Commands that import certificate into TrustStore (JKS format)
+## Commands to Import Certificate into TrustStore (JKS format)
 
 ```shell
-# import test.crt into existing java truststore. 
-#The "keytool -importcert" command had no trouble reading the certificate in both PEM and DER formats.
-keytool -importcert -file <openssl_crt.pem> -keystore <jks-file-name.jks> -storepass jkspass -alias <alias-name> -keypass <keypass>
-keytool -trustcacerts -keystore "/jdk/jre/lib/security/cacerts" -storepass changeit -importcert -alias testalias -file "/opt/ssl/test.crt"
+# Import certificate into existing Java truststore
+# The "keytool -importcert" command can read certificates in both PEM and DER formats
+keytool -importcert -file <openssl_crt.pem> -keystore <jks-file-name.jks> \
+  -storepass jkspass -alias <alias-name> -keypass <keypass>
 
-# create new truststore and import the certificate
-keytool -import -alias testalias -file test.crt -keypass keypass -keystore test.jks -storepass test@123
+keytool -trustcacerts -keystore "/jdk/jre/lib/security/cacerts" -storepass changeit \
+  -importcert -alias testalias -file "/opt/ssl/test.crt"
 
+# Create new truststore and import the certificate
+keytool -import -alias testalias -file test.crt -keypass keypass \
+  -keystore test.jks -storepass test@123
 ```
 
 ---
 
-### Commands that import x.509 certificate and private key into Java Keystore
+## Commands to Import X.509 Certificate and Private Key into Java Keystore
 
-Believe or not, keytool does not provide such basic functionality like importing private key to keystore. You can try
-this workaround with merging PKSC12 file with a private key to a keystore
+Surprisingly, keytool does not provide basic functionality for importing private keys to keystores. You can use this workaround by merging a PKCS#12 file with a private key into a keystore:
 
 ```shell
-#Step one: Convert the x.509 cert and key to a pkcs12 file
-#Note: Make sure you put a password on the pkcs12 file - otherwise you'll get a null pointer exception when you try to import it. 
-openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12 -name [some-alias] -CAfile ca.crt -caname root
+# Step 1: Convert the X.509 certificate and key to a PKCS#12 file
+# Note: Make sure to set a password on the PKCS#12 file to avoid null pointer exceptions
+openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12 \
+  -name [some-alias] -CAfile ca.crt -caname root
 
-#Step two: Convert the pkcs12 file to a Java keystore
+# Step 2: Convert the PKCS#12 file to a Java keystore
 keytool -importkeystore \
-        -deststorepass [changeit] -destkeypass [changeit] -destkeystore server.keystore \
-        -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-password \
-        -alias [some-alias]
+  -deststorepass [changeit] -destkeypass [changeit] -destkeystore server.keystore \
+  -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass some-password \
+  -alias [some-alias]
 ```
 
 ---
 
-### Commands to view a certificate file
+## Commands to View a Certificate File
+
 ```shell
-# view the contents of a .pem certificate
+# View the contents of a PEM certificate
 openssl x509 -in certificate.crt -text -noout
 openssl x509 -inform pem -noout -text -in 'cerfile.cer'
 openssl x509 -inform der -noout -text -in 'cerfile.cer'
 keytool -printcert -file certificate.pem
 
-# windows
+# Windows
 certutil -dump C:\path\certfile.cer
 
-#Using `openssl` to display all certificates of a PEM file
+# Display all certificates in a PEM bundle file
 while openssl x509 -noout -text; do :; done < cert-bundle.pem
 
-# view the contents of a der format certificate
+# View the contents of a DER format certificate
 openssl x509 -inform der -in CERTIFICATE.der -text -noout
 
-
-# list items in truststore/keystore
+# List items in truststore/keystore
 keytool -v -list -keystore /path/to/keystore
 keytool -list -keystore /path/to/keystore -alias foo
-
 ```
 
+---
 
-### Commands to view/export certificate of remote server
+## Commands to View/Export Certificate of Remote Server
+
 ```shell
-# view cert of a remote server
-echo | openssl s_client -showcerts -servername gnupg.org -connect gnupg.org:443 2>/dev/null | openssl x509 -inform pem -noout -text
+# View certificate of a remote server
+echo | openssl s_client -showcerts -servername gnupg.org -connect gnupg.org:443 2>/dev/null \
+  | openssl x509 -inform pem -noout -text
 
-#shows the chain (as served) with nearly all details in a mostly rather ugly format
+# Shows the certificate chain with detailed information
 keytool -printcert -sslserver $host[:$port]
 
-# export remote server certificate
-curl --insecure -vvI https://www.example.com 2>&1 | awk 'BEGIN { cert=0 } /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
-openssl s_client -showcerts -connect host.name.com:443 -servername host.name.com  </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > host.name.com.pem
+# Export remote server certificate
+curl --insecure -vvI https://www.example.com 2>&1 \
+  | awk 'BEGIN { cert=0 } /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
 
-#you may also convert to a certificate for desktop
+openssl s_client -showcerts -connect host.name.com:443 -servername host.name.com </dev/null \
+  | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > host.name.com.pem
+
+# Convert to DER format for desktop use
 openssl x509 -inform PEM -in host.name.com.pem -outform DER -out host.name.com.cer
-
-
 ```
