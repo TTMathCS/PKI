@@ -20,11 +20,15 @@ SHA-256 is the most commonly used variant, producing a 256-bit hash value.
 #### Constants and Initial Values
 
 **Initial hash values** (first 32 bits of fractional parts of square roots of first 8 primes):
-$$H_0 = \text{6a09e667}, H_1 = \text{bb67ae85}, H_2 = \text{3c6ef372}, H_3 = \text{a54ff53a}$$
-$$H_4 = \text{510e527f}, H_5 = \text{9b05688c}, H_6 = \text{1f83d9ab}, H_7 = \text{5be0cd19}$$
+```
+H₀ = 6a09e667, H₁ = bb67ae85, H₂ = 3c6ef372, H₃ = a54ff53a
+H₄ = 510e527f, H₅ = 9b05688c, H₆ = 1f83d9ab, H₇ = 5be0cd19
+```
 
-**Round constants** $K_t$ (first 32 bits of fractional parts of cube roots of first 64 primes):
-$$K_0 = \text{428a2f98}, K_1 = \text{71374491}, ..., K_{63} = \text{c67178f2}$$
+**Round constants** Kₜ (first 32 bits of fractional parts of cube roots of first 64 primes):
+```
+K₀ = 428a2f98, K₁ = 71374491, ..., K₆₃ = c67178f2
+```
 
 #### Preprocessing
 
@@ -38,11 +42,15 @@ For each 512-bit message block:
 1. **Message schedule**: Expand 16 words to 64 words
    **Message Schedule Formula:**
    
-   For $0 \leq t \leq 15$:
-   $$W_t = M_t$$
+   For 0 ≤ t ≤ 15:
+   ```
+   Wₜ = Mₜ
+   ```
    
-   For $16 \leq t \leq 63$:
-   $$W_t = \sigma_1(W_{t-2}) + W_{t-7} + \sigma_0(W_{t-15}) + W_{t-16}$$
+   For 16 ≤ t ≤ 63:
+   ```
+   Wₜ = σ₁(Wₜ₋₂) + Wₜ₋₇ + σ₀(Wₜ₋₁₅) + Wₜ₋₁₆
+   ```
 
 2. **Logical functions**:
    - $\text{Ch}(x,y,z) = (x \land y) \oplus (\lnot x \land z)$
@@ -53,10 +61,12 @@ For each 512-bit message block:
    - $\sigma_1(x) = \text{ROTR}^{17}(x) \oplus \text{ROTR}^{19}(x) \oplus \text{SHR}^{10}(x)$
 
 3. **Main loop** (64 rounds):
-   $$T_1 = h + \Sigma_1(e) + \text{Ch}(e,f,g) + K_t + W_t$$
-   $$T_2 = \Sigma_0(a) + \text{Maj}(a,b,c)$$
-   $$h = g, g = f, f = e, e = d + T_1$$
-   $$d = c, c = b, b = a, a = T_1 + T_2$$
+   ```
+   T₁ = h + Σ₁(e) + Ch(e,f,g) + Kₜ + Wₜ
+   T₂ = Σ₀(a) + Maj(a,b,c)
+   h = g, g = f, f = e, e = d + T₁
+   d = c, c = b, b = a, a = T₁ + T₂
+   ```
 
 ## Security Properties
 
@@ -427,7 +437,9 @@ Verify data hasn't been modified:
 
 ### Message Authentication (HMAC)
 Authenticate messages using shared secret:
-$$\text{HMAC}(K, m) = H((K \oplus opad) \| H((K \oplus ipad) \| m))$$
+```
+HMAC(K, m) = H((K ⊕ opad) || H((K ⊕ ipad) || m))
+```
 
 ## Security Considerations
 

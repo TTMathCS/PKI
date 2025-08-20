@@ -8,18 +8,24 @@ RSA is a public-key cryptographic algorithm that uses prime numbers and modular 
 
 ### Key Generation
 
-1. **Choose two prime numbers** $p$ and $q$, then calculate:
-   $$n = p \times q$$
+1. **Choose two prime numbers** p and q, then calculate:
+   ```
+   n = p × q
+   ```
 
 2. **Calculate Euler's totient function:**
-   $$\phi(n) = (p-1)(q-1)$$
+   ```
+   φ(n) = (p-1)(q-1)
+   ```
 
 3. **Choose an integer $e$** such that:
    - $1 < e < \phi(n)$
    - $\gcd(e, \phi(n)) = 1$ (e is coprime to $\phi(n)$)
 
-4. **Calculate the private key $d$** such that:
-   $$d \times e \equiv 1 \pmod{\phi(n)}$$
+4. **Calculate the private key d** such that:
+   ```
+   d × e ≡ 1 (mod φ(n))
+   ```
    
    This can be computed using the Extended Euclidean Algorithm.
 
@@ -28,19 +34,27 @@ RSA is a public-key cryptographic algorithm that uses prime numbers and modular 
 **Public Key:** $(n, e)$  
 **Private Key:** $(n, d)$
 
-**Encryption:** For message $m$ where $0 \leq m < n$:
-$$c = m^e \pmod{n}$$
+**Encryption:** For message m where 0 ≤ m < n:
+```
+c = m^e mod n
+```
 
-**Decryption:** For ciphertext $c$:
-$$m = c^d \pmod{n}$$
+**Decryption:** For ciphertext c:
+```
+m = c^d mod n
+```
 
 ### Digital Signatures
 
-**Signing:** For message $m$:
-$$s = m^d \pmod{n}$$
+**Signing:** For message m:
+```
+s = m^d mod n
+```
 
 **Verification:** Check if:
-$$m \equiv s^e \pmod{n}$$
+```
+m ≡ s^e mod n
+```
 
 ## Security Considerations
 

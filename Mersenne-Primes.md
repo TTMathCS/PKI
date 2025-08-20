@@ -9,7 +9,9 @@ Mersenne primes are prime numbers that can be expressed in the form $M_p = 2^p -
 ### Definition
 
 A **Mersenne number** is a positive integer of the form:
-$$M_p = 2^p - 1$$
+```
+Mₚ = 2^p - 1
+```
 
 where $p$ is a positive integer.
 
@@ -19,8 +21,10 @@ A **Mersenne prime** is a Mersenne number that is also prime. For $M_p$ to be pr
 
 **Theorem**: If $M_n = 2^n - 1$ is prime, then $n$ must be prime.
 
-**Proof**: If $n = ab$ where $a > 1$ and $b > 1$, then:
-$$2^n - 1 = 2^{ab} - 1 = (2^a)^b - 1$$
+**Proof**: If n = ab where a > 1 and b > 1, then:
+```
+2^n - 1 = 2^(ab) - 1 = (2^a)^b - 1
+```
 
 Since $(2^a)^b - 1$ is divisible by $2^a - 1$ (by the factorization $x^b - 1 = (x-1)(x^{b-1} + x^{b-2} + \cdots + 1)$), we have that $2^n - 1$ is composite.
 
@@ -32,14 +36,20 @@ The **Lucas-Lehmer test** is the most efficient known primality test specificall
 
 **Lucas-Lehmer Sequence:**
 
-For $i = 0$:
-$$S_0 = 4$$
+For i = 0:
+```
+S₀ = 4
+```
 
-For $i > 0$:
-$$S_i = S_{i-1}^2 - 2$$
+For i > 0:
+```
+Sᵢ = Sᵢ₋₁² - 2
+```
 
-**Mathematical Foundation**: The sequence $S_i$ is related to the recurrence:
-$$S_i = \frac{(2 + \sqrt{3})^{2^i} + (2 - \sqrt{3})^{2^i}}{2}$$
+**Mathematical Foundation**: The sequence Sᵢ is related to the recurrence:
+```
+Sᵢ = ((2 + √3)^(2^i) + (2 - √3)^(2^i)) / 2
+```
 
 ### Perfect Numbers Connection
 

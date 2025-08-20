@@ -18,8 +18,10 @@ DSA uses the following parameters:
 
 1. **Choose domain parameters** $(p, q, g)$
 2. **Choose private key** $x$ randomly from $\{1, 2, ..., q-1\}$
-3. **Calculate public key** $y$:
-   $$y = g^x \bmod p$$
+3. **Calculate public key** y:
+   ```
+   y = g^x mod p
+   ```
 
 **Public Key:** $(p, q, g, y)$  
 **Private Key:** $(p, q, g, x)$
@@ -29,10 +31,14 @@ DSA uses the following parameters:
 To sign a message $m$:
 
 1. **Choose random** $k$ from $\{1, 2, ..., q-1\}$
-2. **Calculate** $r$:
-   $$r = (g^k \bmod p) \bmod q$$
-3. **Calculate** $s$:
-   $$s = k^{-1}(H(m) + xr) \bmod q$$
+2. **Calculate** r:
+   ```
+   r = (g^k mod p) mod q
+   ```
+3. **Calculate** s:
+   ```
+   s = k^(-1)(H(m) + xr) mod q
+   ```
    where $H(m)$ is the hash of message $m$
 
 **Signature:** $(r, s)$
@@ -42,13 +48,19 @@ To sign a message $m$:
 To verify signature $(r, s)$ on message $m$:
 
 1. **Verify** $0 < r < q$ and $0 < s < q$
-2. **Calculate** $w$:
-   $$w = s^{-1} \bmod q$$
-3. **Calculate** $u_1$ and $u_2$:
-   $$u_1 = H(m) \cdot w \bmod q$$
-   $$u_2 = r \cdot w \bmod q$$
-4. **Calculate** $v$:
-   $$v = ((g^{u_1} \cdot y^{u_2}) \bmod p) \bmod q$$
+2. **Calculate** w:
+   ```
+   w = s^(-1) mod q
+   ```
+3. **Calculate** u₁ and u₂:
+   ```
+   u₁ = H(m) · w mod q
+   u₂ = r · w mod q
+   ```
+4. **Calculate** v:
+   ```
+   v = ((g^u₁ · y^u₂) mod p) mod q
+   ```
 5. **Accept if** $v = r$
 
 ## Security Considerations
