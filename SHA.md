@@ -36,10 +36,13 @@ $$K_0 = \text{428a2f98}, K_1 = \text{71374491}, ..., K_{63} = \text{c67178f2}$$
 For each 512-bit message block:
 
 1. **Message schedule**: Expand 16 words to 64 words
-   $$W_t = \begin{cases}
-   M_t & \text{for } 0 \leq t \leq 15 \\
-   \sigma_1(W_{t-2}) + W_{t-7} + \sigma_0(W_{t-15}) + W_{t-16} & \text{for } 16 \leq t \leq 63
-   \end{cases}$$
+   **Message Schedule Formula:**
+   
+   For $0 \leq t \leq 15$:
+   $$W_t = M_t$$
+   
+   For $16 \leq t \leq 63$:
+   $$W_t = \sigma_1(W_{t-2}) + W_{t-7} + \sigma_0(W_{t-15}) + W_{t-16}$$
 
 2. **Logical functions**:
    - $\text{Ch}(x,y,z) = (x \land y) \oplus (\lnot x \land z)$

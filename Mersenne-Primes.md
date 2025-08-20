@@ -30,10 +30,13 @@ The **Lucas-Lehmer test** is the most efficient known primality test specificall
 
 **Algorithm**: For an odd prime $p$, $M_p = 2^p - 1$ is prime if and only if $M_p$ divides $S_{p-2}$, where:
 
-$$S_i = \begin{cases}
-4 & \text{if } i = 0 \\
-S_{i-1}^2 - 2 & \text{if } i > 0
-\end{cases}$$
+**Lucas-Lehmer Sequence:**
+
+For $i = 0$:
+$$S_0 = 4$$
+
+For $i > 0$:
+$$S_i = S_{i-1}^2 - 2$$
 
 **Mathematical Foundation**: The sequence $S_i$ is related to the recurrence:
 $$S_i = \frac{(2 + \sqrt{3})^{2^i} + (2 - \sqrt{3})^{2^i}}{2}$$

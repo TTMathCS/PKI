@@ -16,12 +16,12 @@ AES is a symmetric encryption algorithm established as the encryption standard b
 
 AES operates on a 4×4 matrix of bytes called the **state**:
 
-$$\text{State} = \begin{pmatrix}
-s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
-s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
-s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
-s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
-\end{pmatrix}$$
+```
+State = [s₀₀  s₀₁  s₀₂  s₀₃]
+        [s₁₀  s₁₁  s₁₂  s₁₃]
+        [s₂₀  s₂₁  s₂₂  s₂₃]
+        [s₃₀  s₃₁  s₃₂  s₃₃]
+```
 
 ### AES Round Operations
 
@@ -40,22 +40,18 @@ Cyclically shift rows:
 
 #### 3. MixColumns
 Matrix multiplication in $GF(2^8)$:
-$$\begin{pmatrix} 
-s'_{0,j} \\
-s'_{1,j} \\
-s'_{2,j} \\
-s'_{3,j}
-\end{pmatrix} = \begin{pmatrix}
-2 & 3 & 1 & 1 \\
-1 & 2 & 3 & 1 \\
-1 & 1 & 2 & 3 \\
-3 & 1 & 1 & 2
-\end{pmatrix} \begin{pmatrix}
-s_{0,j} \\
-s_{1,j} \\
-s_{2,j} \\
-s_{3,j}
-\end{pmatrix}$$
+```
+[s'₀ⱼ]   [2 3 1 1]   [s₀ⱼ]
+[s'₁ⱼ] = [1 2 3 1] × [s₁ⱼ]
+[s'₂ⱼ]   [1 1 2 3]   [s₂ⱼ]
+[s'₃ⱼ]   [3 1 1 2]   [s₃ⱼ]
+```
+
+Each element is calculated as:
+$$s'_{0,j} = 2 \cdot s_{0,j} + 3 \cdot s_{1,j} + 1 \cdot s_{2,j} + 1 \cdot s_{3,j}$$
+$$s'_{1,j} = 1 \cdot s_{0,j} + 2 \cdot s_{1,j} + 3 \cdot s_{2,j} + 1 \cdot s_{3,j}$$
+$$s'_{2,j} = 1 \cdot s_{0,j} + 1 \cdot s_{1,j} + 2 \cdot s_{2,j} + 3 \cdot s_{3,j}$$
+$$s'_{3,j} = 3 \cdot s_{0,j} + 1 \cdot s_{1,j} + 1 \cdot s_{2,j} + 2 \cdot s_{3,j}$$
 
 #### 4. AddRoundKey
 XOR with round key:
@@ -69,10 +65,13 @@ The key schedule generates round keys from the original key using:
 - **Rcon**: Round constant
 
 For AES-128:
-$$W[i] = \begin{cases}
-W[i-4] \oplus \text{SubWord}(\text{RotWord}(W[i-1])) \oplus \text{Rcon}[i/4] & \text{if } i \bmod 4 = 0 \\
-W[i-4] \oplus W[i-1] & \text{otherwise}
-\end{cases}$$
+**Key Schedule Formula:**
+
+If $i \bmod 4 = 0$:
+$$W[i] = W[i-4] \oplus \text{SubWord}(\text{RotWord}(W[i-1])) \oplus \text{Rcon}[i/4]$$
+
+Otherwise:
+$$W[i] = W[i-4] \oplus W[i-1]$$
 
 ## Security Considerations
 
