@@ -29,7 +29,9 @@ Each round (except the last) consists of four operations:
 
 #### 1. SubBytes (Substitution)
 Replace each byte with a corresponding byte from the S-box:
-$$s'_{i,j} = \text{S-box}[s_{i,j}]$$
+```
+s'ᵢ,j = S-box[sᵢ,j]
+```
 
 #### 2. ShiftRows
 Cyclically shift rows:
@@ -48,14 +50,18 @@ Matrix multiplication in $GF(2^8)$:
 ```
 
 Each element is calculated as:
-$$s'_{0,j} = 2 \cdot s_{0,j} + 3 \cdot s_{1,j} + 1 \cdot s_{2,j} + 1 \cdot s_{3,j}$$
-$$s'_{1,j} = 1 \cdot s_{0,j} + 2 \cdot s_{1,j} + 3 \cdot s_{2,j} + 1 \cdot s_{3,j}$$
-$$s'_{2,j} = 1 \cdot s_{0,j} + 1 \cdot s_{1,j} + 2 \cdot s_{2,j} + 3 \cdot s_{3,j}$$
-$$s'_{3,j} = 3 \cdot s_{0,j} + 1 \cdot s_{1,j} + 1 \cdot s_{2,j} + 2 \cdot s_{3,j}$$
+```
+s'₀,j = 2·s₀,j + 3·s₁,j + 1·s₂,j + 1·s₃,j
+s'₁,j = 1·s₀,j + 2·s₁,j + 3·s₂,j + 1·s₃,j
+s'₂,j = 1·s₀,j + 1·s₁,j + 2·s₂,j + 3·s₃,j
+s'₃,j = 3·s₀,j + 1·s₁,j + 1·s₂,j + 2·s₃,j
+```
 
 #### 4. AddRoundKey
 XOR with round key:
-$$s'_{i,j} = s_{i,j} \oplus k_{i,j}^{(r)}$$
+```
+s'ᵢ,j = sᵢ,j ⊕ kᵢ,j⁽ʳ⁾
+```
 
 ### Key Schedule
 
@@ -67,11 +73,15 @@ The key schedule generates round keys from the original key using:
 For AES-128:
 **Key Schedule Formula:**
 
-If $i \bmod 4 = 0$:
-$$W[i] = W[i-4] \oplus \text{SubWord}(\text{RotWord}(W[i-1])) \oplus \text{Rcon}[i/4]$$
+If `i mod 4 = 0`:
+```
+W[i] = W[i-4] ⊕ SubWord(RotWord(W[i-1])) ⊕ Rcon[i/4]
+```
 
 Otherwise:
-$$W[i] = W[i-4] \oplus W[i-1]$$
+```
+W[i] = W[i-4] ⊕ W[i-1]
+```
 
 ## Security Considerations
 
