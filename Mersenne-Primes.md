@@ -54,7 +54,9 @@ Sᵢ = ((2 + √3)^(2^i) + (2 - √3)^(2^i)) / 2
 ### Perfect Numbers Connection
 
 **Euclid-Euler Theorem**: An even number is perfect if and only if it has the form:
-$$2^{p-1}(2^p - 1)$$
+```
+2^(p-1)(2^p - 1)
+```
 
 where $2^p - 1$ is a Mersenne prime.
 

@@ -9,7 +9,9 @@ Fermat primes are prime numbers of the form $F_n = 2^{2^n} + 1$, where $n$ is a 
 ### Definition
 
 A **Fermat number** is a positive integer of the form:
-$$F_n = 2^{2^n} + 1$$
+```
+Fₙ = 2^(2^n) + 1
+```
 
 where $n \geq 0$ is a non-negative integer.
 
@@ -35,14 +37,18 @@ The first few Fermat numbers are:
 **Proof**: If $n = ab$ where $a$ is odd and $a > 1$, then $2^n + 1$ divides $2^{an} + 1 = 2^{2^n} + 1$, making $F_n$ composite.
 
 **Theorem 2**: Fermat numbers are pairwise coprime.
-$$\gcd(F_m, F_n) = 1 \text{ for } m \neq n$$
+```
+gcd(Fₘ, Fₙ) = 1 for m ≠ n
+```
 
 **Proof**: For $m < n$, we have $F_m$ divides $2^{2^n} - 1$, but $\gcd(2^{2^n} - 1, 2^{2^n} + 1) = 1$.
 
 ### Connection to Regular Polygons
 
-**Gauss-Wantzel Theorem**: A regular $p$-sided polygon is constructible with compass and straightedge if and only if:
-$$p = 2^k \cdot p_1 \cdot p_2 \cdots p_r$$
+**Gauss-Wantzel Theorem**: A regular p-sided polygon is constructible with compass and straightedge if and only if:
+```
+p = 2^k · p₁ · p₂ · ... · pᵣ
+```
 
 where $k \geq 0$ and $p_1, p_2, \ldots, p_r$ are distinct Fermat primes.
 
@@ -58,8 +64,10 @@ where $k \geq 0$ and $p_1, p_2, \ldots, p_r$ are distinct Fermat primes.
 
 For large Fermat numbers, specialized tests are used:
 
-**Pépin's Test**: For $n \geq 1$, $F_n$ is prime if and only if:
-$$3^{(F_n - 1)/2} \equiv -1 \pmod{F_n}$$
+**Pépin's Test**: For n ≥ 1, Fₙ is prime if and only if:
+```
+3^((Fₙ - 1)/2) ≡ -1 (mod Fₙ)
+```
 
 This test is based on the fact that 3 is a quadratic non-residue modulo $F_n$ when $F_n$ is prime.
 
@@ -427,7 +435,9 @@ Fermat originally conjectured that all numbers of the form $F_n = 2^{2^n} + 1$ a
 
 ### Euler's Discovery (1732)
 Leonhard Euler proved Fermat wrong by showing that:
-$$F_5 = 2^{32} + 1 = 4,294,967,297 = 641 \times 6,700,417$$
+```
+F₅ = 2^32 + 1 = 4,294,967,297 = 641 × 6,700,417
+```
 
 Euler found this factorization using the observation that $641 = 5 \times 2^7 + 1$ and $641 = 5^4 + 2^4$.
 

@@ -8,9 +8,11 @@ ECDSA is a Digital Signature Algorithm (DSA) that uses keys derived from Ellipti
 
 ### Elliptic Curves
 
-An elliptic curve over a finite field $\mathbb{F}_p$ (where $p$ is a prime) is defined by the equation:
+An elliptic curve over a finite field 𝔽ₚ (where p is a prime) is defined by the equation:
 
-$$y^2 = x^3 + ax + b \pmod{p}$$
+```
+y² = x³ + ax + b (mod p)
+```
 
 where $4a^3 + 27b^2 \not\equiv 0 \pmod{p}$ (to ensure the curve is non-singular).
 
@@ -18,15 +20,21 @@ where $4a^3 + 27b^2 \not\equiv 0 \pmod{p}$ (to ensure the curve is non-singular)
 
 For two points $P = (x_1, y_1)$ and $Q = (x_2, y_2)$ on the elliptic curve:
 
-**Case 1: Point Doubling** (when $P = Q$):
-$$\lambda = \frac{3x_1^2 + a}{2y_1} \pmod{p}$$
+**Case 1: Point Doubling** (when P = Q):
+```
+λ = (3x₁² + a) / (2y₁) (mod p)
+```
 
-**Case 2: Point Addition** (when $P \neq Q$):
-$$\lambda = \frac{y_2 - y_1}{x_2 - x_1} \pmod{p}$$
+**Case 2: Point Addition** (when P ≠ Q):
+```
+λ = (y₂ - y₁) / (x₂ - x₁) (mod p)
+```
 
-**Result** $P + Q = (x_3, y_3)$:
-$$x_3 = \lambda^2 - x_1 - x_2 \pmod{p}$$
-$$y_3 = \lambda(x_1 - x_3) - y_1 \pmod{p}$$
+**Result** P + Q = (x₃, y₃):
+```
+x₃ = λ² - x₁ - x₂ (mod p)
+y₃ = λ(x₁ - x₃) - y₁ (mod p)
+```
 
 ### Scalar Multiplication
 

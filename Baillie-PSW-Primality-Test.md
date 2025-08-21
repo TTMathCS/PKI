@@ -24,9 +24,11 @@ For odd $n > 1$, write $n - 1 = 2^r \cdot d$ where $d$ is odd. Then $n$ is a **s
 
 ### Lucas Probable Prime Test
 
-The Lucas test is based on **Lucas sequences**. Given integers $P$ and $Q$, define the Lucas sequences:
-$$U_n(P,Q) = \frac{\alpha^n - \beta^n}{\alpha - \beta}$$
-$$V_n(P,Q) = \alpha^n + \beta^n$$
+The Lucas test is based on **Lucas sequences**. Given integers P and Q, define the Lucas sequences:
+```
+Uₙ(P,Q) = (αⁿ - βⁿ) / (α - β)
+Vₙ(P,Q) = αⁿ + βⁿ
+```
 
 where $\alpha$ and $\beta$ are roots of $x^2 - Px + Q = 0$.
 
