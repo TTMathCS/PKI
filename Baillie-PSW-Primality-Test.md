@@ -35,7 +35,9 @@ where $\alpha$ and $\beta$ are roots of $x^2 - Px + Q = 0$.
 The **discriminant** is $D = P^2 - 4Q$.
 
 **Lucas Probable Prime Test**: An odd integer $n$ with $\gcd(n, Q) = 1$ is a **Lucas probable prime** with parameters $(P, Q)$ if:
-$$U_{n - \left(\frac{D}{n}\right)}(P,Q) \equiv 0 \pmod{n}$$
+```
+U_{n - (D/n)}(P,Q) ≡ 0 (mod n)
+```
 
 where $\left(\frac{D}{n}\right)$ is the Jacobi symbol.
 
