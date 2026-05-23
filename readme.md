@@ -13,6 +13,7 @@
 * [Certificate Binary Formats](#certificate-binary-formats)
 * [Public-Key Cryptography](#public-key-cryptography)
 * [Cryptography FAQ](#cryptography-faq)
+* [Choosing SSH Keys](#choosing-ssh-keys)
 * [TrustStores and KeyStores](#truststores-and-keystores)
 * [Commands to Create Self-Signed Certificate Chain](#commands-to-create-self-signed-certificate-chain)
 * [Commands to Import Certificate into TrustStore (JKS format)](#commands-to-import-certificate-into-truststore-jks-format)
@@ -262,6 +263,14 @@ RSA and DSA need large random primes; these find and test them.
 Generic questions that span the algorithms above (brute force, precomputation, rainbow tables, and why they fail):
 
 - **[Cryptography FAQ](Cryptography-FAQ.md)**
+
+---
+
+## Choosing SSH Keys
+
+Which key type to generate for GitHub, Bitbucket, and SSH logins — short answer, Ed25519:
+
+- **[SSH Keys](SSH-Keys.md)**
 
 ---
 
