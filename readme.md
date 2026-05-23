@@ -12,10 +12,7 @@
 * [What is ASN.1 (Abstract Syntax Notation One)?](#what-is-asn1-abstract-syntax-notation-one)
 * [Certificate Binary Formats](#certificate-binary-formats)
 * [Public-Key Cryptography](#public-key-cryptography)
-* [RSA (Prime Numbers + Modular Arithmetic)](#rsa-prime-numbers--modular-arithmetic)
-  * [Algorithms to Find Prime Numbers](#algorithms-to-find-prime-numbers)
-  * [How RSA Works](#how-rsa-works)
-* [ECDSA (Elliptic Curve Digital Signature Algorithm)](#ecdsa-elliptic-curve-digital-signature-algorithm)
+* [Cryptography FAQ](#cryptography-faq)
 * [TrustStores and KeyStores](#truststores-and-keystores)
 * [Commands to Create Self-Signed Certificate Chain](#commands-to-create-self-signed-certificate-chain)
 * [Commands to Import Certificate into TrustStore (JKS format)](#commands-to-import-certificate-into-truststore-jks-format)
@@ -214,24 +211,57 @@ Understanding the relationship between certificate standards:
 
 **Reference:** [Public-key cryptography - Wikipedia](https://en.wikipedia.org/wiki/Public-key_cryptography)
 
-### PKI Algorithms:
-- **[RSA](RSA.md)** (Rivest–Shamir–Adleman)
-- **[ECDSA](ECDSA.md)** (Elliptic Curve Digital Signature Algorithm)
-- **[Ed25519](Ed25519.md)** (Edwards-curve Digital Signature Algorithm)
-- **[DSA](DSA.md)** (Digital Signature Algorithm)
-- **[Diffie-Hellman](Diffie-Hellman.md)** (Key exchange)
+### Public-Key (Asymmetric)
 
-### Related Algorithms:
-- **[AES](AES.md)** (Advanced Encryption Standard - symmetric)
-- **[SHA](SHA.md)** (Secure Hash Algorithm family)
+Different keys for the two directions: a public key anyone can use, a private key you keep.
 
-### Prime Number Algorithms:
-- **[Mersenne Primes](Mersenne-Primes.md)** - Primes of the form 2^p - 1
-- **[Fermat Primes](Fermat-Primes.md)** - Primes of the form 2^(2^n) + 1
-- **[Miller-Rabin Primality Test](Miller-Rabin-Primality-Test.md)** - Probabilistic primality testing
-- **[Baillie-PSW Primality Test](Baillie-PSW-Primality-Test.md)** - Strong probabilistic primality test
-- **[Pocklington Primality Test](Pocklington-Primality-Test.md)** - Deterministic test for special forms
-- **[Sieve of Eratosthenes](Sieve-of-Eratosthenes.md)** - Ancient algorithm for finding primes
+- **[RSA](RSA.md)** - factoring-based encryption and signatures; the classic, still common in certificates
+- **[DSA](DSA.md)** - discrete-log signatures; legacy, deprecated by NIST in 2023, kept for reference
+- **[Diffie-Hellman](Diffie-Hellman.md)** - the original key exchange over finite fields
+- **[ECDSA](ECDSA.md)** - elliptic-curve signatures; small keys, used in TLS and Bitcoin
+- **[Ed25519](Ed25519.md)** - modern elliptic-curve signatures; fast, deterministic, hard to misuse
+- **[X25519](X25519.md)** - modern elliptic-curve key exchange; the TLS 1.3 and SSH default
+
+ECDSA, Ed25519, and X25519 are all elliptic-curve schemes — the same family of math, split between signing and key exchange.
+
+### Symmetric
+
+One shared key, fast enough for bulk data.
+
+- **[AES](AES.md)** - the standard block cipher; use the AES-GCM authenticated mode
+- **[ChaCha20-Poly1305](ChaCha20-Poly1305.md)** - fast software authenticated cipher; the AES-GCM alternative
+
+### Hashing and Authentication
+
+- **[SHA](SHA.md)** - hash family (SHA-256, SHA-3); fingerprints and integrity
+- **[HMAC](HMAC.md)** - keyed hash; proves a message came from a holder of the secret
+
+### Turning Secrets into Keys
+
+- **[Key Derivation and Password Hashing](Key-Derivation-and-Password-Hashing.md)** - Argon2/scrypt/bcrypt/PBKDF2 for passwords, HKDF for session keys
+
+### Post-Quantum
+
+- **[Post-Quantum Cryptography](Post-Quantum-Cryptography.md)** - ML-KEM and ML-DSA, the quantum-resistant replacements for RSA and ECC
+
+### Prime Number Tools
+
+RSA and DSA need large random primes; these find and test them.
+
+- **[Sieve of Eratosthenes](Sieve-of-Eratosthenes.md)** - ancient algorithm for listing small primes
+- **[Miller-Rabin Primality Test](Miller-Rabin-Primality-Test.md)** - fast probabilistic primality test (the practical workhorse)
+- **[Baillie-PSW Primality Test](Baillie-PSW-Primality-Test.md)** - strong probabilistic test with no known counterexamples
+- **[Pocklington Primality Test](Pocklington-Primality-Test.md)** - deterministic proof for numbers of special form
+- **[Mersenne Primes](Mersenne-Primes.md)** - primes of the form 2^p − 1
+- **[Fermat Primes](Fermat-Primes.md)** - primes of the form 2^(2^n) + 1
+
+---
+
+## Cryptography FAQ
+
+Generic questions that span the algorithms above (brute force, precomputation, rainbow tables, and why they fail):
+
+- **[Cryptography FAQ](Cryptography-FAQ.md)**
 
 ---
 

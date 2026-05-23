@@ -1,259 +1,86 @@
-# RSA (Rivest–Shamir–Adleman) Algorithm
+# RSA (Rivest–Shamir–Adleman)
 
-## Overview
+*The original public-key algorithm: encrypt with a public key, decrypt with the
+private one, sign with the private key. Its security comes from how hard it is to
+factor a large number.*
 
-RSA is a public-key cryptographic algorithm that uses prime numbers and modular arithmetic for encryption and digital signatures. The security of RSA relies on the practical difficulty of factoring the product of two large prime numbers, known as the "factoring problem".
+## What it is
 
-## Mathematical Foundation
+RSA, published in 1977, was the first practical public-key scheme and still shows
+up everywhere in TLS certificates and signatures. The public key `(n, e)` is
+shared freely; the private key `(n, d)` is kept secret. Anyone can encrypt to you
+or verify your signature with the public key, but only you can decrypt or sign.
 
-### Key Generation
+Security rests on the factoring problem: `n` is the product of two large secret
+primes `p` and `q`, and recovering them from `n` is infeasible at modern sizes.
 
-1. **Choose two prime numbers** p and q, then calculate:
-   ```
-   n = p × q
-   ```
+## How it works
 
-2. **Calculate Euler's totient function:**
-   ```
-   φ(n) = (p-1)(q-1)
-   ```
+Key generation:
 
-3. **Choose an integer $e$** such that:
-   - $1 < e < \phi(n)$
-   - $\gcd(e, \phi(n)) = 1$ (e is coprime to $\phi(n)$)
+1. Pick two large random primes `p`, `q` and set `n = p·q`.
+2. Compute `φ(n) = (p−1)(q−1)`.
+3. Choose `e` coprime to `φ(n)` — almost always 65537.
+4. Compute the private exponent `d = e⁻¹ mod φ(n)`.
 
-4. **Calculate the private key d** such that:
-   ```
-   d × e ≡ 1 (mod φ(n))
-   ```
-   
-   This can be computed using the Extended Euclidean Algorithm.
+Then for `0 ≤ m < n`:
 
-### Encryption and Decryption
+- **Encrypt:** `c = mᵉ mod n`  **Decrypt:** `m = c^d mod n`
+- **Sign:** `s = m^d mod n`  **Verify:** `m == sᵉ mod n`
 
-**Public Key:** $(n, e)$  
-**Private Key:** $(n, d)$
+It works because raising to `e` then `d` is the identity mod `n` (Euler's theorem).
 
-**Encryption:** For message m where 0 ≤ m < n:
-```
-c = m^e mod n
-```
+![RSA visualization](resources/RSA_Algorithm.png)
 
-**Decryption:** For ciphertext c:
-```
-m = c^d mod n
-```
+## When to use it
 
-### Digital Signatures
+- Fine for certificates and signatures, but new systems increasingly prefer
+  elliptic curves ([Ed25519](Ed25519.md), [ECDSA](ECDSA.md)) for smaller, faster keys.
+- **Always use padding** — OAEP for encryption, PSS for signatures. Textbook RSA
+  (raw `mᵉ`) is insecure: deterministic and malleable.
+- RSA can only encrypt data smaller than the key, so it wraps a symmetric key
+  rather than bulk data. See [symmetric vs. asymmetric](Cryptography-FAQ.md).
+- 2048-bit minimum (~112-bit security); 3072-bit for longer horizons.
 
-**Signing:** For message m:
-```
-s = m^d mod n
-```
+## Example (Python)
 
-**Verification:** Check if:
-```
-m ≡ s^e mod n
-```
-
-## Security Considerations
-
-- Modern RSA typically uses key sizes of 2048 or 4096 bits
-- The difficulty of factoring large composite numbers is the foundation of RSA security
-- No efficient classical algorithms exist for factoring large numbers (quantum computers pose a future threat)
-
-## Prime Number Generation Algorithms
-
-RSA relies on finding large prime numbers. Common algorithms include:
-
-- **Miller-Rabin primality test** - probabilistic primality testing
-- **Sieve of Eratosthenes** - systematic prime finding for smaller numbers
-- **Baillie-PSW primality test** - deterministic for practical ranges
-- **Fermat primality test** - simple but less reliable
-- **Mersenne primes** - primes of the form $2^p - 1$
-
-## Visualization
-
-![RSA Algorithm Visualization](resources/RSA_Algorithm.png)
-
-## Python Implementation
+Concise core showing the math. In production use a vetted library (PyCA
+`cryptography`) that handles OAEP/PSS padding and safe key sizes.
 
 ```python
-import random
-import math
+def keygen(p, q, e=65537):              # real keygen picks p, q at random
+    n, phi = p * q, (p - 1) * (q - 1)
+    return (n, e), (n, pow(e, -1, phi))
 
-def gcd(a, b):
-    """Calculate Greatest Common Divisor using Euclidean algorithm"""
-    while b:
-        a, b = b, a % b
-    return a
-
-def mod_inverse(a, m):
-    """Calculate modular multiplicative inverse using Extended Euclidean Algorithm"""
-    if gcd(a, m) != 1:
-        return None
-    
-    # Extended Euclidean Algorithm
-    def extended_gcd(a, b):
-        if a == 0:
-            return b, 0, 1
-        gcd, x1, y1 = extended_gcd(b % a, a)
-        x = y1 - (b // a) * x1
-        y = x1
-        return gcd, x, y
-    
-    _, x, _ = extended_gcd(a, m)
-    return (x % m + m) % m
-
-def is_prime(n, k=10):
-    """Miller-Rabin primality test"""
-    if n < 2:
-        return False
-    if n == 2 or n == 3:
-        return True
-    if n % 2 == 0:
-        return False
-    
-    # Write n-1 as d * 2^r
-    r = 0
-    d = n - 1
-    while d % 2 == 0:
-        r += 1
-        d //= 2
-    
-    # Perform k rounds of testing
-    for _ in range(k):
-        a = random.randrange(2, n - 1)
-        x = pow(a, d, n)
-        
-        if x == 1 or x == n - 1:
-            continue
-            
-        for _ in range(r - 1):
-            x = pow(x, 2, n)
-            if x == n - 1:
-                break
-        else:
-            return False
-    
-    return True
-
-def generate_prime(bits):
-    """Generate a random prime number of specified bit length"""
-    while True:
-        candidate = random.getrandbits(bits)
-        # Ensure odd number and proper bit length
-        candidate |= (1 << bits - 1) | 1
-        
-        if is_prime(candidate):
-            return candidate
-
-def generate_keypair(bits=1024):
-    """Generate RSA public/private key pair"""
-    # Generate two distinct prime numbers
-    p = generate_prime(bits // 2)
-    q = generate_prime(bits // 2)
-    while p == q:
-        q = generate_prime(bits // 2)
-    
-    # Calculate n and phi(n)
-    n = p * q
-    phi_n = (p - 1) * (q - 1)
-    
-    # Choose e (commonly 65537)
-    e = 65537
-    while gcd(e, phi_n) != 1:
-        e += 2
-    
-    # Calculate d (private exponent)
-    d = mod_inverse(e, phi_n)
-    
-    # Return public and private keys
-    public_key = (n, e)
-    private_key = (n, d)
-    
-    return public_key, private_key
-
-def encrypt(message, public_key):
-    """Encrypt message using RSA public key"""
-    n, e = public_key
-    # Convert message to integer (for demo purposes)
-    if isinstance(message, str):
-        message_int = int.from_bytes(message.encode(), 'big')
-    else:
-        message_int = message
-    
-    if message_int >= n:
-        raise ValueError("Message too large for key size")
-    
-    ciphertext = pow(message_int, e, n)
-    return ciphertext
-
-def decrypt(ciphertext, private_key):
-    """Decrypt ciphertext using RSA private key"""
-    n, d = private_key
-    message_int = pow(ciphertext, d, n)
-    return message_int
-
-def sign(message, private_key):
-    """Sign message using RSA private key"""
-    n, d = private_key
-    if isinstance(message, str):
-        message_int = int.from_bytes(message.encode(), 'big')
-    else:
-        message_int = message
-    
-    if message_int >= n:
-        raise ValueError("Message too large for key size")
-    
-    signature = pow(message_int, d, n)
-    return signature
-
-def verify(message, signature, public_key):
-    """Verify signature using RSA public key"""
-    n, e = public_key
-    if isinstance(message, str):
-        message_int = int.from_bytes(message.encode(), 'big')
-    else:
-        message_int = message
-    
-    verified_message = pow(signature, e, n)
-    return verified_message == message_int
-
-# Example usage
-if __name__ == "__main__":
-    print("Generating RSA key pair...")
-    public_key, private_key = generate_keypair(1024)
-    
-    print(f"Public key (n, e): ({public_key[0]}, {public_key[1]})")
-    print(f"Private key (n, d): ({private_key[0]}, {private_key[1]})")
-    
-    # Encryption/Decryption example
-    message = 12345
-    print(f"\nOriginal message: {message}")
-    
-    encrypted = encrypt(message, public_key)
-    print(f"Encrypted: {encrypted}")
-    
-    decrypted = decrypt(encrypted, private_key)
-    print(f"Decrypted: {decrypted}")
-    
-    # Digital signature example
-    signature = sign(message, private_key)
-    print(f"\nSignature: {signature}")
-    
-    is_valid = verify(message, signature, public_key)
-    print(f"Signature valid: {is_valid}")
+def encrypt(m, pub):  n, e = pub;  return pow(m, e, n)
+def decrypt(c, priv): n, d = priv; return pow(c, d, n)
 ```
 
-## Common Questions
+Real prime generation uses [Miller-Rabin](Miller-Rabin-Primality-Test.md).
 
-**Q: Is it possible to pre-calculate all prime numbers and save them in a rainbow table for fast lookup?**
+## Can the primes just be precomputed?
 
-**A:** No, this is not feasible. Prime numbers are randomly selected during key pair generation. Modern RSA uses primes that are 2^1024 or 2^2048 bits in size, making it computationally impossible to find and store all such prime numbers (there isn't enough storage capacity in existence to hold them all).
+No. RSA-2048 uses two random ~1024-bit primes. There are about 10^305 primes that
+size — storing them all would take ~10^307 bytes (~10^295 TB), far more than the
+universe can hold. Factoring `n` directly is the other route, and the best known
+algorithm (GNFS) rates RSA-2048 at ~112-bit security; it has never been broken.
+The full worked numbers are in the [Cryptography FAQ](Cryptography-FAQ.md).
+
+## Security notes
+
+- Never use raw/textbook RSA — use OAEP for encryption and PSS for signatures.
+- Reusing a prime across two keys, or weak randomness in prime generation, breaks
+  everything — see [why randomness matters](Cryptography-FAQ.md).
+- Vulnerable to quantum computers via Shor's algorithm — see
+  [Post-Quantum Cryptography](Post-Quantum-Cryptography.md).
+
+## See also
+
+- [ECDSA](ECDSA.md) / [Ed25519](Ed25519.md) — smaller-key signature alternatives
+- [Miller-Rabin](Miller-Rabin-Primality-Test.md) — how the primes are found
+- [Cryptography FAQ](Cryptography-FAQ.md) — key sizes, precomputation, quantum
 
 ## References
 
-- [RSA Algorithm Explained - YouTube](https://www.youtube.com/watch?v=qph77bTKJTM)
-- [Public-key cryptography - Wikipedia](https://en.wikipedia.org/wiki/Public-key_cryptography)
-- RFC 8017: PKCS #1: RSA Cryptography Specifications Version 2.2
+- RFC 8017: PKCS #1 RSA Cryptography Specifications v2.2
+- [Public-key cryptography — Wikipedia](https://en.wikipedia.org/wiki/Public-key_cryptography)
